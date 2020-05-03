@@ -10,5 +10,7 @@ urlpatterns = [
     path('signup', views.handlesignup, name='handlesignup'),
     path('login', views.handleLogin, name='handlelogin'),
     path('logout', views.handleLogout, name='handlelogout'),
+    path('content' ,views.Content , name='content'),
+    path('pythontut' ,views.Pythontut , name='Pythontut'),
 
 ]

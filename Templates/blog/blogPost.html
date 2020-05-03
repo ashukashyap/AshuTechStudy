@@ -2,30 +2,38 @@
 
 {% block title %} blogPost {% endblock title %}
 {% block blogactive %} active {% endblock blogactive %}
+
 {% block body %}
+
+
+{% load extras %}
 
    <div class="container my-4">
         <h2 class="blog-post-title">{{post.title}}</h2>
-        <p class="blog-post-meta my-3">{{post.timestamp}}<br><a href="/about">By {{post.author}}</a></p>
+        <p class="blog-post-meta my-3">{{post.timestamp}}<a href="/about"> By {{post.author}}</a></p>
 
-        <p>{{post.content}}</p>
-        <hr>
+        <p>{{post.content|safe}}</p>
+
       </div>
 
 
  <div class="container">
      <h1>Comment {{comment.count}}</h1>
      <div class="my-2">
+
       {% if user.is_authenticated %}
-       <form action="/blog/postComment" method="post">{% csrf_token %}
+         <form action="/blog/postComment" method="post">{% csrf_token %}
          <div class="form-group">
            <label for="comment">Post Comment</label>
-           <input type="text" class="form-control" id="comment"  name="comment" placeholder="Enter comment here">
-      </div>
+
+          <input type="text" class="form-control"  id="comment"  name="comment"  placeholder="Enter comment here">
+         </div>
+
          <input type="hidden" name="postSno" value="{{post.sno}}">
            <input type="hidden" name="parentSno" value="">
          <button type="submit" class="btn btn-primary">Submit</button>
      </form>
+
       {% else %}
        <p> Please login to post a comment</p>
       {% endif %}
@@ -33,7 +41,7 @@
      </div>
 
       {% for comment in comment %}
-     <div class="row my-3">
+        <div class="row my-3">
          <div class="col-md-1">
          <img class="rounded mx-auto d-block w-100" src="/static/img/user3.png" alt="user">
          </div>
@@ -43,9 +51,11 @@
               <b>{{comment.user.username}}</b> <span class="badge badge-secondary"> {{comment.timestamp}}</span>
              <div>{{comment.comment}}</div>
              <div class="replay mx-0">
+                 {% if user.is_authenticated %}
                  <button class="btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#Repleybox{{comment.sno}}" aria-expanded="false" aria-controls="Repleybox{{comment.sno}}">
                   Replay
                  </button>
+
                  <div class="collapse" id="Repleybox{{comment.sno}}">
                  <div class="card card-body my-2">
 
@@ -60,6 +70,32 @@
                  </form>
                </div>
               </div>
+                 {% else %}
+                  <button class="btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#Repleybox{{comment.sno}}" aria-expanded="false"
+                          aria-controls="Repleybox{{comment.sno}} disable">
+                  Login to Replay
+                 </button>
+               {% endif %}
+                 <div class="replies my-2">
+                     {% for reply in replyDict|get_val:comment.sno %}
+                     <div class="row my-2">
+                          <div class="col-md-1">
+                            <img class="rounded mx-auto d-block w-75" src="/static/img/user2.png" alt="user">
+                          </div>
+                         <div class="col-md-11 ">
+<!--                            {{reply.comment}}-->
+                              <b>{{reply.user.username}}</b> <span class="badge badge-secondary"> {{reply.timestamp}}</span>
+                                  <div>{{reply.comment}}</div>
+                         </div>
+                         <br>
+                     </div>
+
+
+                     {% endfor %}
+                 </div>
+
+
+
          </div>
        </div>
      </div>

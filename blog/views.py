@@ -1,6 +1,8 @@
 from django.shortcuts import render, HttpResponse ,redirect
 from.models import Post ,BlogComment
 from django.contrib import messages
+from blog.templatetags import extras
+
 
 # Create your views here.
 
@@ -13,9 +15,19 @@ def blogHome(request):
 
 def blogPost(request, slug):
     post = Post.objects.filter(slug=slug).first()
-    comment = BlogComment.objects.filter(post =post)
-    print(request.user)
-    context = {'post':post , 'comment':comment ,'user':request.user}
+    comment = BlogComment.objects.filter(post =post,parent=None)
+    replies = BlogComment.objects.filter(post =post).exclude(parent=None)
+    replyDict={}
+    for reply in replies:
+        if reply.parent.sno not in replyDict.keys():
+            replyDict[reply.parent.sno] =[reply]
+        else:
+            replyDict[reply.parent.sno].append(reply)
+
+        ### print replies and comment
+
+
+    context = {'post':post , 'comment':comment ,'user':request.user , 'replyDict':replyDict}
 
     return render(request,'blog/blogPost.html',context)
 

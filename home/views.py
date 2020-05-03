@@ -23,7 +23,7 @@ def contact(request):
         email =request.POST['email']
         phone =request.POST['phone']
         content =request.POST['content']
-        print(name,email,phone,content)
+
         if len(name)<2 or len(email)<3 or len(phone)<10 or len(content)<5 :
             messages.error(request,"Plese fill the form Correctly")
         else:
@@ -114,6 +114,9 @@ def handleLogout(request):
 
 
 
+def Content(request):
+    return render(request,'home/content.html')
 
 
-
+def Pythontut(request):
+    return render(request,'home/pythontut.html')
